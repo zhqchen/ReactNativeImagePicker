@@ -8,8 +8,11 @@ import {
 
 import {StackNavigator} from 'react-navigation';
 
+// import PictureShow from './PictureShow';
 import Display from './Display';
 import Preview from './Preview';
+
+import Constants from './Constants';
 
 const MyStackNavigator = StackNavigator(
     {
@@ -44,7 +47,7 @@ const MyStackNavigator = StackNavigator(
             // animationEnabled:false,
         },
         mode:'card',//使用android和ios默认的跳转风格
-        initialRouteName:'display' //设置默认的页面组件
+        initialRouteName: Constants.DISPLAY //设置默认的页面组件
     }
 );
 

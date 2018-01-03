@@ -20,6 +20,7 @@ import Colors from './Colors';
 var ImageShowModule = NativeModules.ImageShowModule;
 
 const ITEM_SIZE = Dimensions.get('window').width / 4 - 4;
+const initialNumToRender = parseInt(Dimensions.get('window').height / ITEM_SIZE * 4);
 
 export default class Display extends PureComponent {
     constructor(props) {
@@ -33,7 +34,6 @@ export default class Display extends PureComponent {
 
     componentWillUnmount() {
         this.timer && clearTimeout(this.timer);
-        ImageShowModule.recycle();
     }
 
     componentDidMount() {
@@ -61,6 +61,9 @@ export default class Display extends PureComponent {
     //展示所有图片
     async showFirstGalleryImages(bucketId) {
         ImageShowModule.getBucketMedias(bucketId, (images)=> {
+            var camera = {};
+            camera.imageId = Constants.TAKE_PHOTO_IMAGE_ID;
+            images.unshift(camera);//前面添加拍照的元素
             this.setState({
                 dataSource: images,
             });
@@ -97,7 +100,7 @@ export default class Display extends PureComponent {
             console.log('open camera to take photo');
             return;
         }
-        this.props.navigation.navigate('preview', {param: '传值到preview'});
+        this.props.navigation.navigate(Constants.PREVIEW, {param: '传值到preview'});
     };
 
     _getItemLayout=(data, index) => (
@@ -154,18 +157,20 @@ export default class Display extends PureComponent {
     render(){
         //refreshing={this.state.refreshing}//下拉刷新在FlatList加上这两个属性
         // onRefresh={this._onRefresh}
+        console.log("initialNumToRender" + initialNumToRender);
         return (
             <View style={styles.container}>
                 <TitleBar topTitle={'Camera'} navigation={this.props.navigation}/>
                 <FlatList
                     numColumns={4}
                     data = {this.state.dataSource}
-                    extraData={this.state}
+                    extraData={this.state.chooseSource}
                     keyExtractor={this._keyExtractor}
                     renderItem={this._renderItemComponent}
                     ListHeaderComponent={this._renderHeader}
                     ListEmptyComponent={this._emptyView}
                     getItemLayout={this._getItemLayout}
+                    initialNumToRender={initialNumToRender}
                 />
             </View>
         );

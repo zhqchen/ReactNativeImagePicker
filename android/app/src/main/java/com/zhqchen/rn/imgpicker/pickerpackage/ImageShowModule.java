@@ -3,6 +3,7 @@ package com.zhqchen.rn.imgpicker.pickerpackage;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -10,8 +11,10 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.common.ModuleDataCleaner;
 import com.zhqchen.rn.imgpicker.bean.GalleryInfoBean;
 import com.zhqchen.rn.imgpicker.bean.ImageInfoBean;
+import com.zhqchen.rn.imgpicker.image.ImageLoaderConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +24,7 @@ import java.util.Map;
  * 图片获取的Module
  * Created by CHENZHIQIANG247 on 2017-11-03.
  */
-public class ImageShowModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+public class ImageShowModule extends ReactContextBaseJavaModule implements ActivityEventListener, ModuleDataCleaner.Cleanable {
 
     private ImagePickerModel model;
 
@@ -42,6 +45,13 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Activ
         Constants.put("ALL_PHOTO_BUCKET_ID", ImagePickerModel.ALL_PHOTO_BUCKET_ID);
         Constants.put("ALL_VIDEO_BUCKET_ID", ImagePickerModel.ALL_VIDEO_BUCKET_ID);
         return Constants;
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        //MainReactPackage中的FrescoModule,没做内存的配置管理,在这儿重新设置Fresco配置
+        Fresco.initialize(getReactApplicationContext(), ImageLoaderConfig.getInstance(getReactApplicationContext()).getImagePipelineConfig());
     }
 
     @ReactMethod
@@ -103,11 +113,6 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Activ
         callback.invoke(array);
     }
 
-    @ReactMethod
-    public void recycle() {
-        model = null;
-    }
-
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
 
@@ -119,5 +124,8 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Activ
     }
 
 
-
+    @Override
+    public void clearSensitiveData() {
+        model = null;
+    }
 }
