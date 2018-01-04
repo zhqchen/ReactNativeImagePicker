@@ -14,8 +14,9 @@ import {
 
 import ImageItemView from './ImageItemView';
 import TitleBar from './TitleBar';
-import Constants from './Constants';
 import Colors from './Colors';
+
+import Constants from './Constants';
 
 var ImageShowModule = NativeModules.ImageShowModule;
 
@@ -27,22 +28,25 @@ export default class Display extends PureComponent {
         super(props);
         this.state= {
             dataSource: [],
-            chooseSource:(new Map():Map<number, object>),
+            chooseSource:[],
             refreshing: false,
         }
     }
 
     componentWillUnmount() {
         this.timer && clearTimeout(this.timer);
+        ImageShowModule.recycle();
     }
 
     componentDidMount() {
+        console.log("display_componentDidMount");
         ImageShowModule.init();
         this.getMyPhotoGallery();
     }
 
     //图片文件夹列表
     async getMyPhotoGallery() {
+        //noinspection JSAnnotator
         ImageShowModule.getMyPhotoGallery((folders : array)=> {
             if(!folders || folders.length == 0) {
                 var camera = {};
@@ -64,30 +68,57 @@ export default class Display extends PureComponent {
             var camera = {};
             camera.imageId = Constants.TAKE_PHOTO_IMAGE_ID;
             images.unshift(camera);//前面添加拍照的元素
+            let chooseData = this.props.navigation.state.params.pictures;//通过state.params来获取传来的参数，后面为key值。此处为pictures
+            console.log('showFirstGalleryImages');
+            console.log(chooseData);
             this.setState({
                 dataSource: images,
+                chooseSource: chooseData
             });
         });
     }
 
     _keyExtractor = (item, index) => item.imageId;
-
+    
     //点击选择
     //noinspection JSAnnotator
     _onChooseClick = (index: number) => {
         // updater functions are preferred for transactional updates
         var item = this.state.dataSource[index];
         // var dataSource = this.state.dataSource;
-        var chooseSource = new Map(this.state.chooseSource);
-        if(chooseSource.get(index) && chooseSource.get(index) != 'undefined') {
-            chooseSource.delete(index);//删除(索引，删除个数)
+        var chooseSource = [];
+        chooseSource = chooseSource.concat(this.state.chooseSource);//concat数组链接，不会改变原数组，仅返回一个结果的副本
+        let position = this._hasChoose(chooseSource, item);
+        if(position != -1) {
+            chooseSource.splice(position);//删除(索引，删除个数)
         } else {
-            chooseSource.set(index, item);//添加
+            chooseSource.push(item);//添加
         }
+        // console.log('_onChooseClick-->' + position + ' size is' + chooseSource.length);
         this.setState({
             chooseSource: chooseSource,
         });
     };
+
+    /**
+     * 判断图片是否已经被选择
+     * @param array
+     * @param element
+     * @returns {number} -1 or index下标
+     * @private
+     */
+    //noinspection JSAnnotator
+    _hasChoose(array, element) {
+        if(!array || !element) {
+            return -1;
+        }
+        for(var index = 0; index < array.length; index++) {
+            if(array[index].mMediaUrl == element.mMediaUrl) {
+                return index;
+            }
+        }
+        return -1;
+    }
 
     async onClick(){
         // var data = await ImageChooser.chooseImage().catch((err)=>{console.log(err);});
@@ -95,12 +126,23 @@ export default class Display extends PureComponent {
     }
 
     //点击跳转
+    //noinspection JSAnnotator
     _onClick = (index: number)=> {
         if(this.state.dataSource[index].imageId == Constants.TAKE_PHOTO_IMAGE_ID) {
             console.log('open camera to take photo');
             return;
         }
-        this.props.navigation.navigate(Constants.PREVIEW, {param: '传值到preview'});
+        this.props.navigation.navigate(Constants.PREVIEW, {param: '传值到preview', index: index});
+    };
+
+    _onLeftBtnClick=()=> {
+        this.props.navigation.goBack();
+    };
+
+    //完成，回传数据
+    _onRightBtnClick=()=> {
+        this.props.navigation.state.params.returnData(this.state.chooseSource);
+        this.props.navigation.goBack();
     };
 
     _getItemLayout=(data, index) => (
@@ -109,7 +151,9 @@ export default class Display extends PureComponent {
     );
 
     _renderItemComponent = ({item, index}) => {
-        var isSelected = this.state.chooseSource.get(index) && this.state.chooseSource.get(index) != 'undefined' ? true : false;
+        // var isSelected = this.state.chooseSource.get(index) && this.state.chooseSource.get(index) != 'undefined' ? true : false;
+        var isSelected = this._hasChoose(this.state.chooseSource, item) != -1;
+        console.log('_renderItemComponent ' + index + "is" + isSelected);
         return (
             <ImageItemView
                 index={index}
@@ -157,10 +201,15 @@ export default class Display extends PureComponent {
     render(){
         //refreshing={this.state.refreshing}//下拉刷新在FlatList加上这两个属性
         // onRefresh={this._onRefresh}
-        console.log("initialNumToRender" + initialNumToRender);
         return (
             <View style={styles.container}>
-                <TitleBar topTitle={'Camera'} navigation={this.props.navigation}/>
+                <TitleBar
+                    topTitle={'Camera'}
+                    rightBtnText={'finish'}
+                    navigation={this.props.navigation}
+                    onLeftBtnClick={this._onLeftBtnClick}
+                    onRightBtnClick={this._onRightBtnClick}
+                />
                 <FlatList
                     numColumns={4}
                     data = {this.state.dataSource}

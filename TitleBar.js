@@ -41,7 +41,6 @@ export default class TitleBar extends Component {
     };
 
     render() {
-        console.log(this.props.rightBtnText);
         return(
           <View style={styles.container}>
 

@@ -1,5 +1,5 @@
 /**
- * Created by CHENZHIQIANG247 on 2017-11-03.
+ * Created by chenzhiqiang247 on 2018-01-04.
  */
 import React, {PureComponent} from 'react';
 import {
@@ -18,15 +18,13 @@ import Constants from './Constants';
 // const url = 'https://imagetest.pawjzs.com/clinic/doctor/a/a8fe7755-4b08-42ac-9639-67eb5bb21c40/photo/doctorPhoto1478501925321512107831.jpg';
 const url = 'https://imagetest.pawjzs.com//clinic/doctor/3/3c1eb44b-58b2-410b-8194-7b23180bd3e0/license/doctorPhoto1506364346411-915548213.jpg';
 
-export default class ImageItemView extends PureComponent {
+export default class StartChooseItemView extends PureComponent {
 
     //props定义
     static propTypes={
-        index: PropTypes.number,
+        index: PropTypes.number.isRequired,
         itemSize: PropTypes.number.isRequired,
         itemData: PropTypes.object.isRequired,
-        selected: PropTypes.bool.isRequired,
-        onChooseClick: PropTypes.func,
         onClick: PropTypes.func,
     };
 
@@ -34,41 +32,30 @@ export default class ImageItemView extends PureComponent {
         this.props.onClick(this.props.index);
     };
 
-    _onChooseClick = ()=> {
-        this.props.onChooseClick(this.props.index);//这里必须对应组件使用者的onChooseClick方法和参数
-    };
-
     //网络地址加载方式：source={{uri: 'https://imagetest.pawjzs.com/clinic/doctor/a/a8fe7755-4b08-42ac-9639-67eb5bb21c40/photo/doctorPhoto1478501925321512107831.jpg'}}
     //磁盘地址加载方式：source={{uri: Platform.OS === 'android' ? 'file://' + itemData.mMediaUrl : itemData.mMediaUrl}}
     //项目资源加载方式：source={require('./imgs/album_selected.png')}
     render() {
         let itemData = this.props.itemData;
-        let selected = this.props.selected;
+        let itemStyle = {width: this.props.itemSize, height: this.props.itemSize};
         if(itemData.imageId == Constants.TAKE_PHOTO_IMAGE_ID) {
             return (
-                <TouchableOpacity onPress={this._onClick} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.container} onPress={this._onClick} activeOpacity={0.7}>
                     <Image
-                        style={{width: this.props.itemSize, height: this.props.itemSize}}
-                        source={require('./imgs/register_add_photo.png')}
+                        style={itemStyle}
+                        source={require('./imgs/status_write_btn_add_pic.png')}
                     />
                 </TouchableOpacity>
             );
         } else {
             return (
                 //activeOpacity为按下的不透明度
-                <View style={[styles.container, {width: this.props.itemSize, height: this.props.itemSize}]}>
-                    <TouchableOpacity onPress={this._onClick} activeOpacity={0.7}>
-                        <Image
-                            style={{width: this.props.itemSize, height: this.props.itemSize, resizeMode: 'cover'}}
-                            source={{uri: Platform.OS === 'android' ? 'file://' + itemData.mMediaUrl : itemData.mMediaUrl}}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.chooseIcon} onPress={this._onChooseClick} activeOpacity={1}>
-                        <Image
-                            style={styles.icon}
-                            source={selected ? require('./imgs/album_selected.png') : require('./imgs/album_no_selected.png')}/>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={styles.container} onPress={this._onClick} activeOpacity={0.7}>
+                    <Image
+                        style={[itemStyle, {resizeMode: 'cover'}]}
+                        source={{uri: Platform.OS === 'android' ? 'file://' + itemData.mMediaUrl : itemData.mMediaUrl}}
+                    />
+                </TouchableOpacity>
             );
         }
     }
@@ -92,9 +79,4 @@ const styles = StyleSheet.create({
         top: 0,
         padding: 3
     },
-
-    icon: {
-        width: 23,
-        height: 23,
-    }
 });
