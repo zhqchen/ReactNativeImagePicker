@@ -130,6 +130,18 @@ export default class Display extends PureComponent {
     _onClick = (index: number)=> {
         if(this.state.dataSource[index].imageId == Constants.TAKE_PHOTO_IMAGE_ID) {
             console.log('open camera to take photo');
+            ImageShowModule.takePhoto((photoPath, errorCode, errorMessage) => {
+                if(photoPath && photoPath != undefined) {
+                    var takenPhoto = {};
+                    takenPhoto.mMediaUrl = photoPath;
+                    this.state.chooseSource.push(takenPhoto);
+                    this._onRightBtnClick();//拍照完成直接返回数据
+                } else if(errorCode == ImageShowModule.ERROR_CAMERA_NOT_PERMITTED) {
+                    console.log('相机权限不可用');
+                } else if(errorCode == ImageShowModule.ERROR_SD_CARD_NOT_VALID) {
+                    console.log('SD卡不可用或空间不足');
+                }
+            });
             return;
         }
         this.props.navigation.navigate(Constants.PREVIEW, {param: '传值到preview', index: index});

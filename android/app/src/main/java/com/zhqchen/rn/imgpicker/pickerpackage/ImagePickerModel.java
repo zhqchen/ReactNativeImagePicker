@@ -23,6 +23,11 @@ import java.util.Map;
  */
 public class ImagePickerModel {
 
+    //拍照的一些错误定义
+    public static final int ERROR_ACTIVITY_NOT_EXISTED= -1;//Activity不存在
+    public static final int ERROR_CAMERA_NOT_PERMITTED = -2;//相机权限没有
+    public static final int ERROR_SD_CARD_NOT_VALID = -3;//SD卡不可用
+
     public static final int CHOOSE_MODE_ONLY_IMAGE = 0;//仅选图片模式, 默认
     public static final int CHOOSE_MODE_IMAGE_AND_VIDEO = 1;//选图片和视频模式//若以后可以同时选择图片和视频，使用此模式即可
 

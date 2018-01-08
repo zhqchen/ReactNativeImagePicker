@@ -2,6 +2,7 @@ package com.zhqchen.rn.imgpicker.pickerpackage;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
@@ -13,7 +14,9 @@ import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.common.ModuleDataCleaner;
 import com.zhqchen.rn.imgpicker.bean.GalleryInfoBean;
 import com.zhqchen.rn.imgpicker.bean.ImageInfoBean;
+import com.zhqchen.rn.imgpicker.utils.ToolUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +29,13 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Modul
 
     private ImagePickerModel model;
 
+    private Callback photoCallback;
+    private File tempFile;//拍照的生成图片
+
     public ImageShowModule(ReactApplicationContext reactContext) {
         super(reactContext);
+        reactContext.addActivityEventListener(this);
+//        reactContext.addLifecycleEventListener(this);
     }
 
     @Override
@@ -38,10 +46,16 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Modul
     @Override
     public Map<String, Object> getConstants() {//设置JS可以使用的常量
         Map<String, Object> Constants = new HashMap<>();
+
+        Constants.put("ERROR_ACTIVITY_NOT_EXISTED", ImagePickerModel.ERROR_ACTIVITY_NOT_EXISTED);
+        Constants.put("ERROR_CAMERA_NOT_PERMITTED", ImagePickerModel.ERROR_CAMERA_NOT_PERMITTED);
+        Constants.put("ERROR_SD_CARD_NOT_VALID", ImagePickerModel.ERROR_SD_CARD_NOT_VALID);
+
         Constants.put("CHOOSE_MODE_ONLY_IMAGE", ImagePickerModel.CHOOSE_MODE_ONLY_IMAGE);
         Constants.put("CHOOSE_MODE_IMAGE_AND_VIDEO", ImagePickerModel.CHOOSE_MODE_IMAGE_AND_VIDEO);
         Constants.put("ALL_PHOTO_BUCKET_ID", ImagePickerModel.ALL_PHOTO_BUCKET_ID);
         Constants.put("ALL_VIDEO_BUCKET_ID", ImagePickerModel.ALL_VIDEO_BUCKET_ID);
+
         return Constants;
     }
 
@@ -64,6 +78,24 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Modul
         if(model == null) {
             model = new ImagePickerModel(getReactApplicationContext(), mode);
         }
+    }
+
+    @ReactMethod
+    public void takePhoto(Callback callback) {
+        if(!ToolUtils.isSDCardValid()) {
+            callback.invoke(null, ImagePickerModel.ERROR_SD_CARD_NOT_VALID, "SD card is invalid or space is not enough");
+            return;
+        }
+        Activity activity = getCurrentActivity();
+        if(activity == null) {
+            callback.invoke(null, ImagePickerModel.ERROR_ACTIVITY_NOT_EXISTED, "current activity is bean destroyed");
+            return;
+        }
+        this.photoCallback = callback;
+        File fileCacheDir = ToolUtils.getCacheDirectory(getReactApplicationContext());//使用应用自己的缓存文件夹 /sdcard/Android/data/packageName/caches/
+        tempFile = new File(fileCacheDir, System.currentTimeMillis() + ".jpeg");
+        Log.e("takePhoto", tempFile.getAbsolutePath());
+        ToolUtils.takePhoto(activity, tempFile, 1);
     }
 
     @ReactMethod
@@ -112,16 +144,25 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Modul
     @ReactMethod
     public void recycle() {
         model = null;
+        tempFile = null;
+        photoCallback = null;
     }
 
     @Override
     public void clearSensitiveData() {
-        model = null;
+        recycle();
     }
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-
+        if(resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        switch (requestCode) {
+            case 1:
+                photoCallback.invoke(tempFile.getAbsolutePath(), 1, null);
+                break;
+        }
     }
 
     @Override

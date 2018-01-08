@@ -15,6 +15,7 @@ import com.facebook.imagepipeline.cache.DefaultBitmapMemoryCacheParamsSupplier;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.listener.RequestListener;
 import com.facebook.react.modules.fresco.SystraceRequestListener;
+import com.zhqchen.rn.imgpicker.utils.ToolUtils;
 
 import java.io.File;
 import java.util.HashSet;
@@ -167,7 +168,7 @@ public class ImageLoaderConfig {
          * 1、当应用被用户卸载后能自动清除缓存，增加用户好感（可能以后用得着时，还会想起我）
          * 2、一些内存清理软件可以扫描出来，进行内存的清理
          */
-        File fileCacheDir = mContext.getCacheDir();
+        File fileCacheDir = ToolUtils.getCacheDirectory(mContext);
 //            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 //                fileCacheDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Fresco");
 //            }
