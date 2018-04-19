@@ -86,6 +86,9 @@ export default class StartChoosePage extends PureComponent {
                     rightBtnText={""}
                     topTitle={'StartChoose'}
                 />
+
+                <View style={styles.dividerLine} />
+
                 <FlatList
                     numColumns={4}
                     data={this.state.dataSource}
@@ -100,5 +103,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
+    },
+
+    dividerLine: {
+        height: 0.5,
+        backgroundColor: Colors.common_border_line
     },
 });

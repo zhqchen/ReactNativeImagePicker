@@ -1,7 +1,7 @@
 /**
+ * 标题栏
  * Created by CHENZHIQIANG247 on 2017-11-15.
  */
-
 import React, {Component} from 'react';
 import {
     Platform,
@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import Colors from './Colors';
-
 import PropTypes from 'prop-types';//0.47版时使用 prop-types 包中的 PropTypes 代替了 react 中的 PropTypes
 
 export default class TitleBar extends Component {
@@ -25,6 +24,7 @@ export default class TitleBar extends Component {
         rightBtnText: PropTypes.string,
         onLeftBtnClick: PropTypes.func,
         onRightBtnClick: PropTypes.func,
+        onTitleClick: PropTypes.func,
         navigation: PropTypes.object,
     };
 
@@ -52,7 +52,7 @@ export default class TitleBar extends Component {
                   }
               </TouchableOpacity>
 
-              <Text style={styles.tvMiddleTitle}>{this.props.topTitle}</Text>
+              <Text style={styles.tvMiddleTitle} onPress={this.props.onTitleClick}>{this.props.topTitle}</Text>
 
               <TouchableOpacity style={styles.rightBtn} onPress={this.props.onRightBtnClick} activeOpacity={0.7}>
                   {

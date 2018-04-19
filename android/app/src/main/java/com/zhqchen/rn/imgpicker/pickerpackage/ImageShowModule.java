@@ -105,6 +105,7 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Modul
             callback.invoke((Object) null);
             return;
         }
+        //TODO:优化, 在getBucketMedias就组装好WritableNativeArray
         WritableNativeArray array = new WritableNativeArray();
         for(GalleryInfoBean infoBean : folders) {
             WritableNativeMap map = new WritableNativeMap();
@@ -122,6 +123,10 @@ public class ImageShowModule extends ReactContextBaseJavaModule implements Modul
     @ReactMethod
     public void getBucketMedias(String bucketId, Callback callback) {
         ArrayList<ImageInfoBean> infoBeans = model.getBucketMedias(Long.parseLong(bucketId));
+        if(infoBeans == null) {
+            return;
+        }
+        //TODO:优化, 在getBucketMedias就组装好WritableNativeArray
         WritableNativeArray array = new WritableNativeArray();
         for(ImageInfoBean infoBean : infoBeans) {
             WritableNativeMap map = new WritableNativeMap();

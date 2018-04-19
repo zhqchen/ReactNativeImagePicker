@@ -1,4 +1,5 @@
 /**
+ * 图片一格的itemView
  * Created by CHENZHIQIANG247 on 2017-11-03.
  */
 import React, {PureComponent} from 'react';
@@ -46,7 +47,7 @@ export default class ImageItemView extends PureComponent {
         let selected = this.props.selected;
         if(itemData.imageId == Constants.TAKE_PHOTO_IMAGE_ID) {
             return (
-                <TouchableOpacity onPress={this._onClick} activeOpacity={0.7}>
+                <TouchableOpacity style={styles.container} onPress={this._onClick} activeOpacity={0.7}>
                     <Image
                         style={{width: this.props.itemSize, height: this.props.itemSize}}
                         source={require('./imgs/register_add_photo.png')}
