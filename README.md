@@ -7,7 +7,7 @@ It contains Folder List, Picture List, Picture Choose and Showing Choose Picture
 
 [start_choose] | [image_list] | [end_choose]
 --- | --- | ---
-![start_choose] | ![image_list] | ![end_choose]
+![./screenshots/start_choose.png] | ![./screenshots/image_list.png] | ![./screenshots/end_choose.png]
 
 ### TODO
 It only run on Android, not IOS; IOS Platform should add the accomplishment to get native photo datas.
