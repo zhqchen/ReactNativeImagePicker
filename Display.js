@@ -26,7 +26,7 @@ import Constants from './Constants';
 var ImageShowModule = NativeModules.ImageShowModule;
 
 const ITEM_SIZE = Dimensions.get('window').width / 4 - 4;
-const initialNumToRender = parseInt(Dimensions.get('window').height / ITEM_SIZE * 4);
+const initialNumToRender = parseInt(Dimensions.get('window').height / ITEM_SIZE);
 const galleyAnimTranslateY = -221.5 - 64 * 2; //文件夹list的初始位置Y
 
 export default class Display extends PureComponent {
@@ -74,39 +74,44 @@ export default class Display extends PureComponent {
                 return;
             }
             this.setState({
-                gallerySource: folders,
                 isGettingData : true,
                 bucketName: '所有图片'
             });
-            this.showFirstGalleryImages(ImageShowModule.ALL_PHOTO_BUCKET_ID.toString());
+            this.showFirstGalleryImages(ImageShowModule.ALL_PHOTO_BUCKET_ID.toString(), folders);
         });
     }
 
     //展示所有图片
-    async showFirstGalleryImages(bucketId) {
+    async showFirstGalleryImages(bucketId, gallerySource) {
         ImageShowModule.getBucketMedias(bucketId, (images)=> {
-            let chooseData = this.props.navigation.state.params.pictures;//通过state.params来获取传来的参数，后面为key值。此处为pictures
-            var gallerySource = this.state.gallerySource;
-            if(bucketId === ImageShowModule.ALL_PHOTO_BUCKET_ID.toString() && gallerySource && gallerySource.length == 0) {
+            if(bucketId === ImageShowModule.ALL_PHOTO_BUCKET_ID.toString()) {
                 var camera = {};
                 camera.imageId = Constants.TAKE_PHOTO_IMAGE_ID;
                 images.unshift(camera);//前面添加拍照的元素
+            }
+            if(gallerySource) {//初次进来
+                let chooseData = this.props.navigation.state.params.pictures;//通过state.params来获取传来的参数，后面为key值。此处为pictures
                 var allPhotoItem = {};
                 allPhotoItem.bucketId = ImageShowModule.ALL_PHOTO_BUCKET_ID.toString();
                 allPhotoItem.bucketDisplayName= '所有图片';
                 allPhotoItem.firstImagePath = images[0].firstImagePath;
                 allPhotoItem.count = images.length;
                 gallerySource.unshift(allPhotoItem);//首位增加所有图片的item
+                this.setState({
+                    dataSource: images,
+                    chooseSource: chooseData,
+                    gallerySource: gallerySource,
+                    isGettingData: false,
+                });
+            } else {
+                console.log("showFirstGalleryImages_end3" + Date.now());
+                //TODO:这里的setState的界面刷新，数据量大时，耗时长，需要优化
+                this.setState({
+                    dataSource: images,
+                    isGettingData: false,
+                });
+                console.log("showFirstGalleryImages_end4" + Date.now());//end3--->end4耗时长，性能有问题
             }
-            console.log("showFirstGalleryImages_end3" + Date.now());
-            //TODO:这里的setState的界面刷新，数据量大时，耗时长，需要优化
-            this.setState({
-                dataSource: images,
-                chooseSource: chooseData,
-                gallerySource: gallerySource,
-                isGettingData: false,
-            });
-            console.log("showFirstGalleryImages_end4" + Date.now());//end3--->end4耗时长，性能有问题
         });
     }
 
@@ -121,8 +126,10 @@ export default class Display extends PureComponent {
         var chooseSource = [];
         chooseSource = chooseSource.concat(this.state.chooseSource);//concat数组链接，不会改变原数组，仅返回一个结果的副本
         let position = this._hasChoose(chooseSource, item);
+        console.log(position);
+        console.log(chooseSource);
         if (position != -1) {
-            chooseSource.splice(position);//删除(索引，删除个数)
+            chooseSource.splice(position, 1);//删除(索引，删除个数)
         } else {
             chooseSource.push(item);//添加
         }
@@ -158,15 +165,16 @@ export default class Display extends PureComponent {
     };
 
     _onGalleryItemClick = (bucketId, bucketName)=> {
-        this._onTitleClick();//先隐藏文件夹列表
+        if(this._onTitleClick() || this.state.bucketName == bucketName) {//先隐藏文件夹列表, 若点击的还是当前文件夹，不再响应
+            return;
+        }
         this.tempTimer = setTimeout(()=> {
             this.setState({
                 isGettingData: true,
                 bucketName: bucketName,
-            });
-            if(this.state.bucketName != bucketName) {//若点击的还是当前文件夹，不再响应
+            }, ()=> {
                 this.showFirstGalleryImages(bucketId);
-            }
+            })
         }, 300);
     };
 
@@ -202,16 +210,27 @@ export default class Display extends PureComponent {
         this.props.navigation.goBack();
     };
 
+    //@return 标题的动画是否正在运行
     _onTitleClick = ()=> {
         let currentValue = this.state.popAnim.__getValue();
-        if(currentValue != 0 && currentValue != 1) {//动画还在执行
-            return;
+        console.log("currentValue-->" + currentValue);
+        if(currentValue > 0.01 && currentValue < 0.99) {//动画还在执行
+            return true;
         }
+        //有时候，动画结束后的value值不是准确为0或1
         Animated.timing(this.state.popAnim, {
-            toValue: currentValue == 0 ? 1 : 0,
+            toValue: currentValue < 0.01 ? 1 : 0,
             duration: 300,
             easing: Easing.inout,//linear, ease, quad, cubic, sin, elastic, bounce, back, bezier, in, out, inout
         }).start();
+        return false;
+    };
+
+    //动画是否在运行中
+    _animIsRunning = () => {
+        let currentValue = this.state.popAnim.__getValue();
+        console.log("currentValue-->" + currentValue);
+        return !!(currentValue > 0.01 && currentValue < 0.99);
     };
 
     _getItemLayout = (data, index) => (
@@ -315,7 +334,7 @@ export default class Display extends PureComponent {
                         ListHeaderComponent={this._renderHeader}
                         ListEmptyComponent={this._emptyView}
                         getItemLayout={this._getItemLayout}
-                        initialNumToRender={1}
+                        initialNumToRender={initialNumToRender}
                     />
 
                     <Animated.View style={[
