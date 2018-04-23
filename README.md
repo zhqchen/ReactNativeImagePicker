@@ -5,6 +5,7 @@ A program attempts to make a accomplishment of multi image picker using native p
 The Program get mobile phone's native data of picture folders and pictures, and show the datas using JS.
 It contains Folder List, Picture List, Picture Choose and Showing Choose Picture.
 
+--- | --- | ---
 ![start_choose]  ![image_list]  ![end_choose]
 
 ### TODO
