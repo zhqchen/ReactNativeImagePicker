@@ -14,6 +14,7 @@ import {
     Animated,
     Easing,
     ActivityIndicator,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import GalleryListView from './GalleryListView';
@@ -33,14 +34,15 @@ export default class Display extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            gallerySource: [],
-            dataSource: [],
-            chooseSource: [],
+            gallerySource: [], //图片文件夹数据源
+            dataSource: [], //图片数据源
+            chooseSource: [],//已选择的图片数据源
             refreshing: false,
             popAnim: new Animated.Value(0),
-            isGettingData : false,//是否正在获取数据
-            bucketName: ''
-        }
+            isGettingData:true,//是否正在获取数据
+            isFolderPopup : false,//图片文件夹的List是弹出
+            bucketName : '' //当前图片文件夹的名称
+        };
     }
 
     componentWillUnmount() {
@@ -51,16 +53,11 @@ export default class Display extends PureComponent {
 
     componentDidMount() {
         ImageShowModule.init();
-        //TODO:显示ProgressDialog
         this.getMyPhotoGallery();
     }
 
     //图片文件夹列表
     async getMyPhotoGallery() {
-        //noinspection JSAnnotator
-        this.setState({
-            isGettingData : true
-        });
         ImageShowModule.getMyPhotoGallery((folders)=> {
             if (!folders || folders.length == 0) {
                 var camera = {};
@@ -69,14 +66,11 @@ export default class Display extends PureComponent {
                 dataSource.push(camera);
                 this.setState({
                     dataSource: dataSource,
-                    isGettingData: false
+                    isGettingData: false,
+                    bucketName: '所有图片'
                 });
                 return;
             }
-            this.setState({
-                isGettingData : true,
-                bucketName: '所有图片'
-            });
             this.showFirstGalleryImages(ImageShowModule.ALL_PHOTO_BUCKET_ID.toString(), folders);
         });
     }
@@ -102,6 +96,7 @@ export default class Display extends PureComponent {
                     chooseSource: chooseData,
                     gallerySource: gallerySource,
                     isGettingData: false,
+                    bucketName: '所有图片'
                 });
             } else {
                 console.log("showFirstGalleryImages_end3" + Date.now());
@@ -210,19 +205,27 @@ export default class Display extends PureComponent {
         this.props.navigation.goBack();
     };
 
-    //@return 标题的动画是否正在运行
+    /**
+     *  点击标题，弹出或隐藏文件夹PopWindow
+     * @returns {boolean} 标题的动画是否正在运行
+     */
     _onTitleClick = ()=> {
         let currentValue = this.state.popAnim.__getValue();
         console.log("currentValue-->" + currentValue);
         if(currentValue > 0.01 && currentValue < 0.99) {//动画还在执行
             return true;
         }
-        //有时候，动画结束后的value值不是准确为0或1
-        Animated.timing(this.state.popAnim, {
-            toValue: currentValue < 0.01 ? 1 : 0,
-            duration: 300,
-            easing: Easing.inout,//linear, ease, quad, cubic, sin, elastic, bounce, back, bezier, in, out, inout
-        }).start();
+        console.log(currentValue > 0.01);
+        this.setState({
+            isFolderPopup: currentValue < 0.01
+        }, ()=> {
+            //有时候，动画结束后的value值不是准确为0或1
+            Animated.timing(this.state.popAnim, {
+                toValue: currentValue < 0.01 ? 1 : 0,
+                duration: 300,
+                easing: Easing.inout,//linear, ease, quad, cubic, sin, elastic, bounce, back, bezier, in, out, inout
+            }).start();
+        });
         return false;
     };
 
@@ -337,6 +340,13 @@ export default class Display extends PureComponent {
                         initialNumToRender={initialNumToRender}
                     />
 
+                    {
+                        this.state.isFolderPopup ?
+                            <TouchableWithoutFeedback onPress={()=> this._onTitleClick()}>
+                                <View style={[styles.gallery, {bottom: 0, backgroundColor: Colors.translucent_color}]} />
+                            </TouchableWithoutFeedback>: null
+                    }
+
                     <Animated.View style={[
                         styles.gallery,
                         {
@@ -363,6 +373,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
+        backgroundColor: 'white'
     },
     emptyView: {
         flex: 1,

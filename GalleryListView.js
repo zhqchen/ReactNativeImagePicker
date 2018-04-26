@@ -10,7 +10,7 @@ import {
     Image,
     View,
     FlatList,
-    TouchableOpacity
+    TouchableHighlight
 } from 'react-native';
 
 import Colors from './Colors';
@@ -23,12 +23,12 @@ export default class GalleryListView extends Component {
     //因此以({item, index}) =>{}的形式来写参数
     _renderItemComponent = ({item, index}) => {
         return (
-            <TouchableOpacity activeOpacity={0.7} onPress={()=> this.props.onItemClick(item.bucketId, item.bucketDisplayName)}>
+            <TouchableHighlight underlayColor={Colors.common_second_color} activeOpacity={0.7} onPress={()=> this.props.onItemClick(item.bucketId, item.bucketDisplayName)}>
                 <View style={styles.itemContainer}>
                     <Image style={styles.ivPhoto} source={{uri: Platform.OS === 'android' ? 'file://' + item.firstImagePath : item.firstImagePath}}/>
                     <Text style={styles.tvPhotoName}>{item.bucketDisplayName +'(' + item.count + ')'}</Text>
                 </View>
-            </TouchableOpacity>
+            </TouchableHighlight>
         )
     };
 
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     },
 
     dividerLine: {
-        height: 0.5,
+        height: 1,
         backgroundColor: Colors.common_border_line
     }
 

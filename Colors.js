@@ -7,4 +7,5 @@ export default {
     common_primary_color : '#353535',
     common_second_color: '#949494',
     common_border_line: '#dddddd',
+    translucent_color: '#7f00000',//半透明
 }

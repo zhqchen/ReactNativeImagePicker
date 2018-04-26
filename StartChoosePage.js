@@ -99,6 +99,7 @@ export default class StartChoosePage extends PureComponent {
         )
     }
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
