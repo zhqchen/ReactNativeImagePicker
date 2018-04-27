@@ -1,6 +1,6 @@
 /**
  * 图片浏览列表
- * Created by CHENZHIQIANG247 on 2017-11-03.
+ * Created by zhqchen on 2017-11-03.
  */
 import React, {PureComponent} from 'react';
 import {
@@ -282,7 +282,7 @@ export default class Display extends PureComponent {
                 for (var i = 0; i < 10; i++) {
                     data.push({
                         imageId: 'imageId' + i,
-                        mMediaUrl: 'https://imagetest.pawjzs.com/web/banner/a4d382a8-04b0-4af0-a4b2-b4c75ea02f5b.jpg'
+                        mMediaUrl: 'http://img4.imgtn.bdimg.com/it/u=1725836098,1795487958&fm=27&gp=0.jpg'
                     });
                 }
                 this.setState({

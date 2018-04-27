@@ -1,6 +1,6 @@
 /**
  * 标题栏
- * Created by CHENZHIQIANG247 on 2017-11-15.
+ * Created by zhqchen on 2017-11-15.
  */
 import React, {Component} from 'react';
 import {

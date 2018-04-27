@@ -1,5 +1,5 @@
 /**
- * Created by chenzhiqiang247 on 2018-01-04.
+ * Created by zhqchen on 2018-01-04.
  */
 
 export default class ToolUtils {

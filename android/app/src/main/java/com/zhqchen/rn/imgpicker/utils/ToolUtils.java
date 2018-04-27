@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by chenzhiqiang247 on 2018-01-05.
+ * Created by zhqchen on 2018-01-05.
  */
 
 public class ToolUtils {

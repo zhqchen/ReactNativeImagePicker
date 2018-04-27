@@ -1,6 +1,6 @@
 /**
  *  图片文件夹列表
- * Created by chenzhiqiang247 on 2018-01-12.
+ * Created by zhqchen on 2018-01-12.
  */
 import React, {Component} from 'react';
 import {

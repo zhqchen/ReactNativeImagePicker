@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by CHENZHIQIANG247 on 2017-11-13.
+ * Created by zhqchen on 2017-11-13.
  */
 public class ImagePickerModel {
 

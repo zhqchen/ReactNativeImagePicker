@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by CHENZHIQIANG247 on 2017-11-03.
+ * Created by zhqchen on 2017-11-03.
  */
 public class ImageShowPackage implements ReactPackage {
 

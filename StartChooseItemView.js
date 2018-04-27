@@ -1,5 +1,5 @@
 /**
- * Created by chenzhiqiang247 on 2018-01-04.
+ * Created by zhqchen on 2018-01-04.
  */
 import React, {PureComponent} from 'react';
 import {
@@ -15,9 +15,6 @@ import PropTypes from 'prop-types';
 
 import Constants from './Constants';
 
-// const url = 'https://imagetest.pawjzs.com/clinic/doctor/a/a8fe7755-4b08-42ac-9639-67eb5bb21c40/photo/doctorPhoto1478501925321512107831.jpg';
-const url = 'https://imagetest.pawjzs.com//clinic/doctor/3/3c1eb44b-58b2-410b-8194-7b23180bd3e0/license/doctorPhoto1506364346411-915548213.jpg';
-
 export default class StartChooseItemView extends PureComponent {
 
     //props定义
@@ -32,7 +29,7 @@ export default class StartChooseItemView extends PureComponent {
         this.props.onClick(this.props.index);
     };
 
-    //网络地址加载方式：source={{uri: 'https://imagetest.pawjzs.com/clinic/doctor/a/a8fe7755-4b08-42ac-9639-67eb5bb21c40/photo/doctorPhoto1478501925321512107831.jpg'}}
+    //网络地址加载方式：source={{uri: 'http://img4.imgtn.bdimg.com/it/u=1725836098,1795487958&fm=27&gp=0.jpg'}}
     //磁盘地址加载方式：source={{uri: Platform.OS === 'android' ? 'file://' + itemData.mMediaUrl : itemData.mMediaUrl}}
     //项目资源加载方式：source={require('./imgs/album_selected.png')}
     render() {

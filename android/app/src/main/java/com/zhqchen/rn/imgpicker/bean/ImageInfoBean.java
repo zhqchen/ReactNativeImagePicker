@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 
 /**
- * Created by CHENZHIQIANG247 on 2017-11-13.
+ * Created by zhqchen on 2017-11-13.
  */
 public class ImageInfoBean extends ImageBaseInfoBean implements Serializable, Comparable<ImageInfoBean> {
 

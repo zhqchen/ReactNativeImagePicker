@@ -3,7 +3,7 @@ package com.zhqchen.rn.imgpicker.bean;
 import com.facebook.react.bridge.WritableNativeMap;
 
 /**
- * Created by CHENZHIQIANG247 on 2017-11-13.
+ * Created by zhqchen on 2017-11-13.
  */
 
 public class GalleryInfoBean extends WritableNativeMap {

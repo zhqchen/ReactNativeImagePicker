@@ -1,6 +1,6 @@
 /**
  * 图片一格的itemView
- * Created by CHENZHIQIANG247 on 2017-11-03.
+ * Created by zhqchen on 2017-11-03.
  */
 import React, {PureComponent} from 'react';
 import {
@@ -15,9 +15,6 @@ import {
 import PropTypes from 'prop-types';
 
 import Constants from './Constants';
-
-// const url = 'https://imagetest.pawjzs.com/clinic/doctor/a/a8fe7755-4b08-42ac-9639-67eb5bb21c40/photo/doctorPhoto1478501925321512107831.jpg';
-const url = 'https://imagetest.pawjzs.com//clinic/doctor/3/3c1eb44b-58b2-410b-8194-7b23180bd3e0/license/doctorPhoto1506364346411-915548213.jpg';
 
 export default class ImageItemView extends PureComponent {
 
@@ -39,7 +36,7 @@ export default class ImageItemView extends PureComponent {
         this.props.onChooseClick(this.props.index);//这里必须对应组件使用者的onChooseClick方法和参数
     };
 
-    //网络地址加载方式：source={{uri: 'https://imagetest.pawjzs.com/clinic/doctor/a/a8fe7755-4b08-42ac-9639-67eb5bb21c40/photo/doctorPhoto1478501925321512107831.jpg'}}
+    //网络地址加载方式：source={{uri: 'http://img4.imgtn.bdimg.com/it/u=1725836098,1795487958&fm=27&gp=0.jpg'}}
     //磁盘地址加载方式：source={{uri: Platform.OS === 'android' ? 'file://' + itemData.mMediaUrl : itemData.mMediaUrl}}
     //项目资源加载方式：source={require('./imgs/album_selected.png')}
     render() {

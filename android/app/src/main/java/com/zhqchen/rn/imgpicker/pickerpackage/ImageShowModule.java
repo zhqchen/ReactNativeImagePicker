@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * 图片获取的Module
- * Created by CHENZHIQIANG247 on 2017-11-03.
+ * Created by zhqchen on 2017-11-03.
  */
 public class ImageShowModule extends ReactContextBaseJavaModule implements ModuleDataCleaner.Cleanable, ActivityEventListener {
 

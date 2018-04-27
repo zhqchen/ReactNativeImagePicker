@@ -1,5 +1,5 @@
 /**
- * Created by CHENZHIQIANG247 on 2018-01-02.
+ * Created by zhqchen on 2018-01-02.
  */
 import React, { Component } from 'react';
 import {
@@ -44,7 +44,7 @@ export default class PictureShow extends Component {
     _generateData() {
         var data = [];
         for(var i = 0; i < 100; i++) {
-            data.push({imageId: 'imageId' + i, mMediaUrl: 'https://imagetest.pawjzs.com/web/banner/a4d382a8-04b0-4af0-a4b2-b4c75ea02f5b.jpg'});
+            data.push({imageId: 'imageId' + i, mMediaUrl: 'http://img4.imgtn.bdimg.com/it/u=1725836098,1795487958&fm=27&gp=0.jpg'});
         }
         return data;
     }
